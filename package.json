@@ -1,0 +1,25 @@
+{
+  "name": "menagerie",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/js/menagerie.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/lucaswadedavis/menagerie.git"
+  },
+  "author": "Luke Davis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lucaswadedavis/menagerie/issues"
+  },
+  "homepage": "https://github.com/lucaswadedavis/menagerie#readme",
+  "dependencies": {
+    "gridstack": "^0.2.3",
+    "jquery": "^2.1.4",
+    "magog": "^0.1.0",
+    "underscore": "^1.8.3"
+  }
+}
