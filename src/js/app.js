@@ -1,0 +1,5 @@
+(function () {
+
+  // the actual application
+
+})();
