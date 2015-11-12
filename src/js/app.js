@@ -1,20 +1,95 @@
 (function () {
 
-	var Component = function (content, minWidth, maxWidth, minHeight, maxHeight) {
+	function nameTitle() {
+		return '<h1 class="v-mid">Luke</h1>';
+	};
+
+	function interests() {
+		var allInterests = [
+			'javascript',
+			'space',
+			'evolution',
+			'elixir',
+			'genetic algorithms'
+		];
+
+		var d = '';
+		d += '<h2>Interests</h2>';
+		d += '<ul>';
+			for (var i = 0; i < allInterests.length; i++) {
+				d += '<li>' + allInterests[i] + '</li>';
+			}
+		d += '</ul>';
+		return d;
+	};
+
+	function quote() {
+		var quotes = [
+			'Action is a virtue.',
+			'Technology is Biology by other means.',
+			'Where there is life, there is hope.'
+		];
+
+		return '<p class="text-center">' + _.sample(quotes) + '</p>';
+	};
+
+	function empty() {
+		return '<div class="empty"></div>';
+	};
+
+	function generateRowPattern(n) {
+		n = n || 1;
+		var rowPatterns = [
+			[3,3,3,3],
+			[4,4,4],
+			[12],
+			[6,6],
+			[9,3],
+			[3,9]
+		];
+
+		var x = [];
+
+		for (var i = 0; i < n; i++) {
+			x.push(_.sample(rowPatterns));
+		}
+
+		return x;
+	};
+
+	////////////////////////////////////////////////
+
+	var Component = function (content, minWidth, minHeight, maxWidth, maxHeight) {
 		// width and height constraints are in pixels, not grid units
 		this.minWidth = minWidth || 100;
-		this.minHeight = minHeight || 20;
-		this.maxWidth = Math.Infinity;
-		this.maxHeight = Math.Infinity;
+		this.minHeight = minHeight || 50;
+		this.maxWidth = Infinity;
+		this.maxHeight = Infinity;
 		this.content = content;
 	};
 
 	var components = [];
-	components.push(new Component('<h1>Luke</h1>'));
-	components.push(new Component('<h2>JavaScript</h2>'));
+	components.push(new Component(nameTitle(), null, 70));
+	components.push(new Component(interests(), 200, 140));
+	components.push(new Component(quote()));
+	components.push(new Component(empty()));
+
+	var genome = {
+		borderWidth: darwa.int(5),
+		cellHeight: darwa.int(15),
+		verticalMargin: darwa.int(15),
+		colorPalette: [
+			darwa('rgb(234,10,30)'),
+			darwa('rgb(23,23,23)'),
+			darwa('rgb(200,34,120)')
+		],
+		padding: darwa.int(10),
+		rowPatterns: generateRowPattern(3)
+	}
 
 	var state = {
-		components: components,
+		components: _.shuffle(components),
+		genome: genome,
 		route: 'single-page'
 	}
 
@@ -31,10 +106,32 @@
 
   	magog.after(id, function () {
   		var options = {
-  		    cell_height: 80,
-  		    vertical_margin: 10
+  		    cell_height: state.genome.cellHeight,
+  		    vertical_margin: state.genome.verticalMargin
   		};
   		$('.grid-stack').gridstack(options);
+  	});
+
+  	var g = state.genome;
+
+  	magog.style({
+  		body: {
+  			background: g.colorPalette[2]
+  		},
+
+  		'.grid-stack-item-content': {
+  			background: g.colorPalette[0],
+  			border: g.borderWidth + 'px solid ' + g.colorPalette[1],
+  			padding: g.padding + 'px',
+  			
+  			h1: {
+  				'text-align': 'center'
+  			},
+
+  			'.text-center': {
+  				'text-align': 'center'
+  			}
+  		}
   	});
 
   	return app.singlePage.container(state);
@@ -51,14 +148,28 @@
 
   	app.singlePage.container.row = function (state) {
   		var d = '';
-  		for (var i = 0; i < state.components.length; i++) {
-  			console.log(state.components[i])
-  	    d += '<div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="2">';
-  	    	d +=  '<div class="grid-stack-item-content">' + state.components[i].content + '</div>';
-   	    d += '</div>';
+  		var n = 0;
+  		var x;
+  		for (var i = 0; i < state.genome.rowPatterns.length; i++) {
+  				x = 0;
+  	    	for (var j = 0; j < state.genome.rowPatterns[i].length; j++) {
+  	    		console.log(i, j, n, state.components.length);
+  	    		if (n >= state.components.length) {
+  	    			break;
+  	    		}  	   
+  	    		d += '<div class="grid-stack-item" data-gs-x="' + x + '" data-gs-y="' + i + '" data-gs-width="' + state.genome.rowPatterns[i][j] + '" data-gs-height="' + state.genome.cellHeight + '">';
+  	    		d +=  app.singlePage.container.row.cell(state.components[n].content);
+   	    		d += '</div>';
+  	    		n++;
+  	    		x += state.genome.rowPatterns[i][j];
+  	    	}
    	  }
   	  return d;
   };
+
+  app.singlePage.container.row.cell = function (componentContent, state) {
+  	return '<div class="grid-stack-item-content">' + componentContent + '</div>';
+  }
 
   // Keyboard interface to bring up other screens
 
