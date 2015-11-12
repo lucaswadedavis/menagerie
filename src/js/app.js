@@ -83,6 +83,7 @@
 			darwa('rgb(23,23,23)'),
 			darwa('rgb(200,34,120)')
 		],
+		colorBackground: darwa('rgb(255,255,255)', 0.01),
 		padding: darwa.int(10),
 		rowPatterns: generateRowPattern(3)
 	}
@@ -116,7 +117,7 @@
 
   	magog.style({
   		body: {
-  			background: g.colorPalette[2]
+  			background: g.colorBackground
   		},
 
   		'.grid-stack-item-content': {
@@ -124,6 +125,10 @@
   			border: g.borderWidth + 'px solid ' + g.colorPalette[1],
   			padding: g.padding + 'px',
   			
+			  display: 'flex',
+			  'flex-direction': 'column',
+			  'justify-content': 'center',
+
   			h1: {
   				'text-align': 'center'
   			},
